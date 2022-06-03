@@ -113,7 +113,9 @@ def main():
         print("")
         print("Argument".ljust(40), "Description")
         print("IPRange/cidr".ljust(40), "This is the entire subnet range of IPs that are in the environment")
-        print("excluded ips seperated by commas".ljust(40), "Self explanitory")
+        print("excluded ips seperated by commas".ljust(40), "Self explanitory (They must be in ascending order and are limited to /24)")
+        print("")
+        print("Ex: python3 cidr-autosolve.py 10.15.0.0/17 \"10.15.15.0/24, 10.15.32.0/24, 10.20.55.0/24 10.20.90.0/24\"")
         quit()
     elif (re.search('[a-zA-Z]', sys.argv[1]) or re.search('[a-zA-Z]', sys.argv[2])): # did they put a letter in the ip
         print("Error: Invalid arguments. Try running with -help instead")
