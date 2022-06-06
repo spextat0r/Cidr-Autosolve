@@ -17,12 +17,12 @@ def do_logic(idx_of_2nd_per, first_2_octects, counter, end_ip, out_of_scope_data
         third_octect = int(third_octect[:third_octect.find('.')])
 
         while counter < third_octect: # the counter starts at whatever third octect
-            if ((counter + 128) <= third_octect and (counter + 128) in cdr_17):
-                if (first_2_octects + str(counter) + ".0/24") not in out_of_scope_data:
+            if ((counter + 128) <= third_octect and (counter + 128) in cdr_17): # this if statement checks that counter + 128 (128 being the divisble for a /17) does note exceed the out of bounds IP's third octect and that it equals one of the numbers in cird_17
+                if (first_2_octects + str(counter) + ".0/24") not in out_of_scope_data: # this if statement checks if the ip we just landed on is not in the out_of_scope_ips
                     ips_in_scope.append(first_2_octects + str(counter) + ".0/17")
                 # print(first_2_octects + str(counter) + ".0/17")
                 counter += 128
-            elif ((counter + 64) <= third_octect and (counter + 64) in cdr_18):
+            elif ((counter + 64) <= third_octect and (counter + 64) in cdr_18): # we use 64 here because a /18 uses increments of 64 and it is the same for the rest of the logic tree
                 if (first_2_octects + str(counter) + ".0/24") not in out_of_scope_data:
                     ips_in_scope.append(first_2_octects + str(counter) + ".0/18")
                 # print(first_2_octects + str(counter) + ".0/18")
@@ -64,8 +64,8 @@ def do_logic(idx_of_2nd_per, first_2_octects, counter, end_ip, out_of_scope_data
             counter += 1
 
     while counter < end_ip: # since the out of scope ips should not exceed 255, so it would not be 256 or above we need to keep going until we hit the end_ip whatever it may be depending on the cidr
-        if ((counter + 128) in cdr_17):
-            if (first_2_octects + str(counter) + ".0/24") not in out_of_scope_data:
+        if ((counter + 128) in cdr_17): # now that we are past the out of scope IPs we don't need to check if it exceedes anything other than end_ip which is done one the line above
+            if (first_2_octects + str(counter) + ".0/24") not in out_of_scope_data: # the same logic as above
                 ips_in_scope.append(first_2_octects + str(counter) + ".0/17")
             # print(first_2_octects + str(counter) + ".0/17")
             counter += 128
