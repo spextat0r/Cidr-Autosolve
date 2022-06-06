@@ -12,8 +12,8 @@ ips_in_scope = []
 
 #this is the logic and rules that define cidr
 def do_logic(idx_of_2nd_per, first_2_octects, counter, end_ip, out_of_scope_data):
-    for arr_count in out_of_scope_data:  # this for loop goes through the out_of_scope_data list so that we can move the counter up to the point of out of scope and then skip the out of scope ip
-        third_octect = arr_count[idx_of_2nd_per + 1:] #this will get the third octect of the out of scope ip we are currently using in the out_of_scope_ips list
+    for arr_current in out_of_scope_data:  # this for loop goes through the out_of_scope_data list so that we can move the counter up to the point of out of scope and then skip the out of scope ip
+        third_octect = arr_current[idx_of_2nd_per + 1:] #this will get the third octect of the out of scope ip we are currently using in the out_of_scope_ips list
         third_octect = int(third_octect[:third_octect.find('.')])
 
         while counter < third_octect: # the counter starts at whatever third octect
