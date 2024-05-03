@@ -63,12 +63,16 @@ if __name__ == '__main__':
 
     for ip in scope:
         if ip not in exclusions:
-            scope_exclusions_removed.append(ip)
+            try:
+                test = ipaddress.ip_address(ip)
+                scope_exclusions_removed.append(ip)
+            except ValueError:
+                print('address/netmask is invalid: %s' % ip)
+                continue
 
     print('Cleaned list contains {} ips'.format(str(len(scope_exclusions_removed))))
-
+    scope_exclusions_removed = sorted(scope_exclusions_removed, key=ipaddress.IPv4Address)
     with open(args.o, 'a') as f:
         for item in scope_exclusions_removed:
             f.write(item + '\n')
     f.close()
-
