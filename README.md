@@ -20,3 +20,18 @@ Excluded: 10.5.15.0/24, 10.5.22.0.24, 10.5. 61.0/24
 It works on a different basis than cidr autosolve it can take any list of ips or cidr ranges and will output a list of ips that do not contain any ips that are in the range for the given exclusions list. Its simpler than cidr autosolve and is less likely to hit an edgecase.
 usage is 
 ```python3 ip-autosolve.py scope exclusions```
+
+Example of scope:
+```
+10.10.10.0/24
+10.20.10.0/24
+10.30.20.0/24
+```
+
+Example of exclusions:
+```
+10.10.10.5
+10.20.10.0/27
+10.30.20.10
+10.30.20.50
+```
