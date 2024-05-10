@@ -71,7 +71,7 @@ if __name__ == '__main__':
                 test = ipaddress.ip_address(ip)
                 scope_exclusions_removed.append(ip)
             except ValueError:
-                print('Invalid IP address detected skipping: %s' % ip)
+                print('Invalid IP address detected from scope skipping: %s' % ip)
                 continue
 
     scope_exclusions_removed = sorted(scope_exclusions_removed, key=ipaddress.IPv4Address)# sort the list of ips
