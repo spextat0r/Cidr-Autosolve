@@ -2,6 +2,51 @@ import ipaddress
 import argparse
 import sys, os
 
+def get_ip_class(ipaddr):
+    classA = ipaddress.IPv4Network(("10.0.0.0", "255.0.0.0"))
+    classB = ipaddress.IPv4Network(("172.16.0.0", "255.240.0.0"))
+    classC = ipaddress.IPv4Network(("192.168.0.0", "255.255.0.0"))
+
+    if ipaddr in classA:
+        return 'A'
+    elif ipaddr in classB:
+        return 'B'
+    elif ipaddr in classC:
+        return 'C'
+    else:
+        return 'public'
+
+def convert_dashnot_to_ips(inp): # takes string input
+
+    tmp = inp.split('-') # split the start and end ips assuming input is "10.10.10.10-10.10.20.10" formatted
+    try:
+        start_ip = ipaddress.IPv4Address(tmp[0])
+        end_ip = ipaddress.IPv4Address(tmp[1])
+    except ipaddress.AddressValueError:
+        print('There is an issue with the ipaddress you gave {}'.format(inp))
+        return []
+    except Exception as e:
+        print(e)
+        return []
+
+    if get_ip_class(start_ip) != get_ip_class(end_ip):
+        print('The Start and end IPs are from different IP classes {}'.format(inp))
+        return []
+
+    if end_ip < start_ip:
+        print('EndIP is smaller than StartIP {}'.format(inp))
+        return []
+
+    # Generate all IP addresses in the range
+    current_ip = start_ip
+    ip_list = []
+
+    while current_ip <= end_ip:
+        ip_list.append(str(current_ip))
+        current_ip += 1
+
+    return ip_list
+
 def pub_or_priv(ipaddress_to_check):
     return "Private" if (ipaddress.ip_address(ipaddress_to_check).is_private) else "Public"
 
@@ -18,6 +63,11 @@ def parse_hosts_file(hosts_file):  # parse our host file
                                 # Assuming CIDR notation
                                 network = ipaddress.ip_network(line, strict=False) # black magic
                                 hosts.extend(str(ip) for ip in network.hosts())
+                            elif '-' in line: # allow dash notation
+                                iplist = convert_dashnot_to_ips(line)
+                                if iplist != [] and len(iplist) > 0:
+                                    for ip in iplist:
+                                        hosts.append(ip)
                             else:
                                 hosts.append(line)
                         except Exception as e:
@@ -36,6 +86,11 @@ def parse_hosts_file(hosts_file):  # parse our host file
                 # Assuming CIDR notation
                 network = ipaddress.ip_network(hosts_file, strict=False)
                 hosts.extend(str(ip) for ip in network.hosts())
+            elif '-' in hosts_file: # allow dash notation
+                iplist = convert_dashnot_to_ips(hosts_file)
+                if iplist != [] and len(iplist) > 0:
+                    for ip in iplist:
+                        hosts.append(ip)
             else:
                 hosts.append(hosts_file)
         except Exception as e:
@@ -46,7 +101,7 @@ def parse_hosts_file(hosts_file):  # parse our host file
         return hosts
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Take a file of scope and a file of ")  # argparse
+    parser = argparse.ArgumentParser(description="Take a file of scope and a file of exclusions to output a cleaned scope", formatter_class=argparse.RawTextHelpFormatter, epilog='Accepted IP formats\nSingle: 10.10.10.10\nCidr: 10.10.10.0/24\nSubnet: 10.10.10.0/255.255.255.0\nLine: 10.10.10.0-10.10.11.255')  # argparse
     parser.add_argument("scope_file", help="Path to a file containing the full scope can be 1 ip per line or 1 cidr per line")
     parser.add_argument("exclusions_file", help="Path to a file containing the list of exclusions can be 1 ip per line or 1 cidr per line")
     parser.add_argument('-o', default='cidr_clean.txt', help='Outputfile name Default=cidr_clean.txt')
