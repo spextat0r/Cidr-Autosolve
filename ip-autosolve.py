@@ -19,7 +19,7 @@ def get_ip_class(ipaddr):
 def convert_dashnot_to_ips(inp): # takes string input
 
     tmp = inp.split('-') # split the start and end ips assuming input is "10.10.10.10-10.10.20.10" formatted
-    try:
+    try: # attempt to convert the ips into ipaddress.IPv4Address object if they gave bad input itll error here and we just return blank
         start_ip = ipaddress.IPv4Address(tmp[0])
         end_ip = ipaddress.IPv4Address(tmp[1])
     except ipaddress.AddressValueError:
@@ -29,11 +29,11 @@ def convert_dashnot_to_ips(inp): # takes string input
         print(e)
         return []
 
-    if get_ip_class(start_ip) != get_ip_class(end_ip):
+    if get_ip_class(start_ip) != get_ip_class(end_ip): # ensure the IPs are from the same cidr class
         print('The Start and end IPs are from different IP classes {}'.format(inp))
         return []
 
-    if end_ip < start_ip:
+    if end_ip < start_ip: # ensure the end ip is bigger than the start ip
         print('EndIP is smaller than StartIP {}'.format(inp))
         return []
 
@@ -41,7 +41,7 @@ def convert_dashnot_to_ips(inp): # takes string input
     current_ip = start_ip
     ip_list = []
 
-    while current_ip <= end_ip:
+    while current_ip <= end_ip: # get a full list of ips
         ip_list.append(str(current_ip))
         current_ip += 1
 
@@ -65,9 +65,11 @@ def parse_hosts_file(hosts_file):  # parse our host file
                                 hosts.extend(str(ip) for ip in network.hosts())
                             elif '-' in line: # allow dash notation
                                 iplist = convert_dashnot_to_ips(line)
-                                if iplist != [] and len(iplist) > 0:
-                                    for ip in iplist:
+                                if iplist != [] and len(iplist) > 0: # ensure the list is not empty if it is we had an error
+                                    for ip in iplist: # append ips to the hosts list
                                         hosts.append(ip)
+                                else:
+                                    sys.exit(1)
                             else:
                                 hosts.append(line)
                         except Exception as e:
@@ -78,7 +80,7 @@ def parse_hosts_file(hosts_file):  # parse our host file
             hosts = list(set(hosts)) # unique the hosts
             return hosts
         except FileNotFoundError:
-            print('The given file does not exist')
+            print('The given file does not exist "{}"'.format(hosts_file))
             sys.exit(1)
     else:
         try:
@@ -88,14 +90,16 @@ def parse_hosts_file(hosts_file):  # parse our host file
                 hosts.extend(str(ip) for ip in network.hosts())
             elif '-' in hosts_file: # allow dash notation
                 iplist = convert_dashnot_to_ips(hosts_file)
-                if iplist != [] and len(iplist) > 0:
-                    for ip in iplist:
+                if iplist != [] and len(iplist) > 0: # ensure the list is not empty if it is we had an error
+                    for ip in iplist: # append ips to the hosts list
                         hosts.append(ip)
+                else:
+                    sys.exit(1)
             else:
                 hosts.append(hosts_file)
         except Exception as e:
             print(e)
-            print('Error: there is something wrong with the ip you gave')
+            print('Error: there is something wrong with the ip you gave "{}"'.format(hosts_file))
             sys.exit(1)
         hosts = list(set(hosts))  # unique the hosts
         return hosts
@@ -113,8 +117,10 @@ if __name__ == '__main__':
 
     options = parser.parse_args()
 
+    print('Parsing Scppe...')
     scope = parse_hosts_file(options.scope_file)
     print('Scope contains {} ips'.format(str(len(scope))))
+    print('Parsing Exclusions...')
     exclusions = parse_hosts_file(options.exclusions_file)
     print('Exclusions contains {} ips'.format(str(len(exclusions))))
 
