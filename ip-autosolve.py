@@ -2,10 +2,12 @@ import ipaddress
 import argparse
 import sys, os
 
+# so we only need to define them once
+classA = ipaddress.IPv4Network(("10.0.0.0", "255.0.0.0"))
+classB = ipaddress.IPv4Network(("172.16.0.0", "255.240.0.0"))
+classC = ipaddress.IPv4Network(("192.168.0.0", "255.255.0.0"))
+
 def get_ip_class(ipaddr):
-    classA = ipaddress.IPv4Network(("10.0.0.0", "255.0.0.0"))
-    classB = ipaddress.IPv4Network(("172.16.0.0", "255.240.0.0"))
-    classC = ipaddress.IPv4Network(("192.168.0.0", "255.255.0.0"))
 
     if ipaddr in classA:
         return 'A'
