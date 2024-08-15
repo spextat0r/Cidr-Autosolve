@@ -119,6 +119,22 @@ if __name__ == '__main__':
 
     options = parser.parse_args()
 
+    if os.path.isfile(options.o):
+        conditions = ['y', 'n', 'd']
+        yn = input('The output file "{}" already exists do you want to continue Yes, No, Delete the old file? (y/n/d): '.format(options.o))
+        while yn not in conditions:
+            print('Invalid option')
+            yn = input('The output file "{}" already exists do you want to continue Yes, No, Delete the old file? (y/n/d): '.format(options.o))
+        if yn.lower() == 'd':
+            print('Deleting file "{}"...'.format(options.o))
+            os.remove(options.o)
+        elif yn.lower() == 'n':
+            print('Exiting...')
+            sys.exit(1)
+        else:
+            print('Continuing... this will append new data to "{}"'.format(options.o))
+
+
     print('Parsing Scppe...')
     scope = parse_hosts_file(options.scope_file)
     print('Scope contains {} ips'.format(str(len(scope))))
