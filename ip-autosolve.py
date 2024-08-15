@@ -119,13 +119,13 @@ if __name__ == '__main__':
 
     options = parser.parse_args()
 
-    if os.path.isfile(options.o):
+    if os.path.isfile(options.o): # check if the outfile already exists
         conditions = ['y', 'n', 'd']
-        yn = input('The output file "{}" already exists do you want to continue Yes, No, Delete the old file? (y/n/d): '.format(options.o))
-        while yn not in conditions:
+        yn = input('The output file "{}" already exists do you want to continue Yes, No, Delete the old file? (y/n/d): '.format(options.o)) # figure out what they want to do
+        while yn not in conditions: # they gave bad input
             print('Invalid option')
-            yn = input('The output file "{}" already exists do you want to continue Yes, No, Delete the old file? (y/n/d): '.format(options.o))
-        if yn.lower() == 'd':
+            yn = input('The output file "{}" already exists do you want to continue Yes, No, Delete the old file? (y/n/d): '.format(options.o)) # figure out what they want to do
+        if yn.lower() == 'd': # logik
             print('Deleting file "{}"...'.format(options.o))
             os.remove(options.o)
         elif yn.lower() == 'n':
@@ -136,10 +136,10 @@ if __name__ == '__main__':
 
 
     print('Parsing Scppe...')
-    scope = parse_hosts_file(options.scope_file)
+    scope = parse_hosts_file(options.scope_file) # parse scope file
     print('Scope contains {} ips'.format(str(len(scope))))
-    print('Parsing Exclusions...')
-    exclusions = parse_hosts_file(options.exclusions_file)
+    print('Parsing Exclusions...') 
+    exclusions = parse_hosts_file(options.exclusions_file) # parse exclusions file
     print('Exclusions contains {} ips'.format(str(len(exclusions))))
 
     scope_exclusions_removed = []
@@ -150,7 +150,7 @@ if __name__ == '__main__':
                 test = ipaddress.ip_address(ip)
                 scope_exclusions_removed.append(ip)
             except ValueError:
-                print('Invalid IP address detected from scope skipping: %s' % ip)
+                print('Invalid IP address detected from scope skipping: {}'.format(ip))
                 continue
 
     scope_exclusions_removed = sorted(scope_exclusions_removed, key=ipaddress.IPv4Address)# sort the list of ips
@@ -165,12 +165,12 @@ if __name__ == '__main__':
     if public and private:
         print('WARNING: Your scope contains both public and private IP addresses')
 
-    if options.t == 'cidr':
+    if options.t == 'cidr': # since the scope_exclusions_removed variable is already in a format of just ips we only need to check for -t cidr else do nothing
         scope_exclusions_removed = [ipaddress.IPv4Address(line) for line in scope_exclusions_removed] # convert the list of strings to a list of ipv4address objects
         scope_exclusions_removed = [ip.with_prefixlen for ip in ipaddress.collapse_addresses(scope_exclusions_removed)] # convert that to cidr
 
     print('Cleaned list contains {} ips/subnets'.format(str(len(scope_exclusions_removed))))
-    with open(options.o, 'a') as f:
+    with open(options.o, 'a') as f: # write to file
         for item in scope_exclusions_removed:
             f.write(item + '\n')
-    f.close()
+        f.close()
