@@ -1,4 +1,4 @@
-# Cidr-Autosolve
+# Cidr-Autosolve (Depreciated use ip-autosolve.py)
 
 Cidr-Autosolve is a Python script that takes a big IP range and numerous small IP range exclusions and outputs all IPs in the large range except those in the small range exclusion in Cidr notation.
 
