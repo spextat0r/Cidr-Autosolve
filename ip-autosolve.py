@@ -136,7 +136,7 @@ if __name__ == '__main__':
             print('Continuing... this will append new data to "{}"'.format(options.o))
 
 
-    print('Parsing Scppe...')
+    print('Parsing Scope...')
     scope = parse_hosts_file(options.scope_file) # parse scope file
     print('Scope contains {} ips'.format(str(len(scope))))
     print('Parsing Exclusions...')
