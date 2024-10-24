@@ -20,6 +20,7 @@ def get_ip_class(ipaddr):
 
 def convert_dashnot_to_ips(inp): # takes string input
 
+    inp = inp.replace(' ', '') # handle the case where a user gives us a - notation ip like "10.10.10.10 - 10.10.20.10"
     tmp = inp.split('-') # split the start and end ips assuming input is "10.10.10.10-10.10.20.10" formatted
     try: # attempt to convert the ips into ipaddress.IPv4Address object if they gave bad input itll error here and we just return blank
         start_ip = ipaddress.IPv4Address(tmp[0])
@@ -138,7 +139,7 @@ if __name__ == '__main__':
     print('Parsing Scppe...')
     scope = parse_hosts_file(options.scope_file) # parse scope file
     print('Scope contains {} ips'.format(str(len(scope))))
-    print('Parsing Exclusions...') 
+    print('Parsing Exclusions...')
     exclusions = parse_hosts_file(options.exclusions_file) # parse exclusions file
     print('Exclusions contains {} ips'.format(str(len(exclusions))))
 
