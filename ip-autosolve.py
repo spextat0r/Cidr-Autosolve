@@ -1,5 +1,6 @@
 import ipaddress
 import argparse
+import readline
 import sys, os
 
 # so we only need to define them once
