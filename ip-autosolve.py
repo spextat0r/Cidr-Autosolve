@@ -19,6 +19,14 @@ def get_ip_class(ipaddr):
     else:
         return 'public'
 
+def test_ip(in_item):
+    try:
+        ip = ipaddress.ip_address(in_item)
+    except ValueError:
+        print(f"Invalid IP address {in_item}")
+        sys.exit(1)
+
+
 def convert_dashnot_to_ips(inp): # takes string input
 
     inp = inp.replace(' ', '') # handle the case where a user gives us a - notation ip like "10.10.10.10 - 10.10.20.10"
@@ -147,13 +155,9 @@ if __name__ == '__main__':
     scope_exclusions_removed = []
 
     for ip in scope: # remove invalid ips
-        if ip not in exclusions:
-            try:
-                test = ipaddress.ip_address(ip)
-                scope_exclusions_removed.append(ip)
-            except ValueError:
-                print('Invalid IP address detected from scope skipping: {}'.format(ip))
-                continue
+        test_ip(ip)
+
+    scope_exclusions_removed = list(set(scope) - set(exclusions))
 
     scope_exclusions_removed = sorted(scope_exclusions_removed, key=ipaddress.IPv4Address)# sort the list of ips
     private = False
